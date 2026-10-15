@@ -23,20 +23,21 @@ function requiredRecord(records: Certificate[], id: string): Certificate {
 }
 
 class InMemoryCertificateService implements CertificateService {
+  readonly mode = "mock" as const;
   private records = mockCertificates.map((certificate) => ({ ...certificate }));
 
-  listCertificates(): Certificate[] {
+  async listCertificates(): Promise<Certificate[]> {
     return this.records.map((certificate) => ({ ...certificate }));
   }
 
-  getCertificate(id: string): Certificate | null {
+  async getCertificate(id: string): Promise<Certificate | null> {
     const record = this.records.find(
       (certificate) => certificate.id.toLowerCase() === id.trim().toLowerCase(),
     );
     return record ? { ...record } : null;
   }
 
-  createCertificate(input: NewCertificate): Certificate {
+  async createCertificate(input: NewCertificate): Promise<Certificate> {
     let id = createId();
     while (this.records.some((certificate) => certificate.id === id)) {
       id = createId();
@@ -48,21 +49,22 @@ class InMemoryCertificateService implements CertificateService {
       status: "active",
       revocationReason: null,
       revokedAt: null,
+      revocationTransactionReference: null,
     };
     this.records = [certificate, ...this.records];
     return { ...certificate };
   }
 
-  updateOffChainMetadata(
+  async updateOffChainMetadata(
     id: string,
     update: CertificateMetadataUpdate,
-  ): Certificate {
+  ): Promise<Certificate> {
     const record = requiredRecord(this.records, id);
     Object.assign(record, update);
     return { ...record };
   }
 
-  revokeCertificate(id: string, reason: string): Certificate {
+  async revokeCertificate(id: string, reason: string): Promise<Certificate> {
     const record = requiredRecord(this.records, id);
     if (record.status === "revoked") {
       throw new Error("This certificate has already been revoked.");
@@ -74,6 +76,7 @@ class InMemoryCertificateService implements CertificateService {
     record.status = "revoked";
     record.revocationReason = reason.trim();
     record.revokedAt = new Date().toISOString().slice(0, 10);
+    record.revocationTransactionReference = null;
     return { ...record };
   }
 }

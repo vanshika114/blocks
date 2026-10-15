@@ -62,7 +62,10 @@ export function CertificateDetailsModal({
         </div>
         <div className="detail-grid">
           <Detail label="Recipient" value={certificate.recipientName} />
-          <Detail label="Recipient email" value={certificate.recipientEmail} />
+          <Detail label="Recipient email" value={certificate.recipientEmail ?? "Not stored"} />
+          {certificate.revocationTransactionReference && (
+            <Detail label="Revocation transaction reference (unverified)" value={certificate.revocationTransactionReference} mono />
+          )}
           <Detail label="Issuing institution" value={certificate.institution} />
           <Detail label="Certificate ID" value={certificate.id} mono />
           <Detail label="Issue date" value={formatDate(certificate.issuedAt)} />

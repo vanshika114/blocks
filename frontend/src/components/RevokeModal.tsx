@@ -5,23 +5,35 @@ import type { Certificate } from "../types/certificate";
 
 export function RevokeModal({
   certificate,
+  storageMode,
   onClose,
   onConfirm,
 }: {
   certificate: Certificate;
+  storageMode: "mock" | "apps-script";
   onClose: () => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string) => Promise<void>;
 }) {
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
     if (reason.trim().length < 8) {
       setError("Please enter a reason with at least 8 characters.");
       return;
     }
-    onConfirm(reason.trim());
+    setSubmitting(true);
+    setError("");
+    try {
+      await onConfirm(reason.trim());
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "The record could not be revoked.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -41,7 +53,7 @@ export function RevokeModal({
         </p>
         <div className="demo-notice compact-notice">
           <AlertTriangle size={16} />
-          <span>This changes local demo state only. No blockchain transaction will be sent.</span>
+          <span>{storageMode === "mock" ? "This changes local demo state only." : "This records off-chain revocation metadata only."} No blockchain transaction will be sent or implied.</span>
         </div>
         <form onSubmit={submit}>
           <label className="field-label" htmlFor="revoke-reason">Reason for revocation</label>
@@ -60,7 +72,7 @@ export function RevokeModal({
           {error && <p className="field-error" role="alert">{error}</p>}
           <div className="modal-actions">
             <button className="button button-secondary" type="button" onClick={onClose}>Cancel</button>
-            <button className="button button-danger" type="submit">Confirm revocation</button>
+            <button className="button button-danger" type="submit" disabled={submitting}>{submitting ? "Saving…" : "Confirm revocation"}</button>
           </div>
         </form>
       </section>

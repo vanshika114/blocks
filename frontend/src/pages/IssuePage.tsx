@@ -6,8 +6,9 @@ import { formatDate, verificationUrl } from "../lib/certificateUtils";
 import type { Certificate, NewCertificate } from "../types/certificate";
 
 interface IssuePageProps {
+  storageMode: "mock" | "apps-script";
   defaultInstitution: string;
-  onIssue: (input: NewCertificate) => Certificate;
+  onIssue: (input: NewCertificate) => Promise<Certificate>;
   onVerify: (id: string) => void;
   onView: (certificate: Certificate) => void;
 }
@@ -17,7 +18,7 @@ function localToday(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
-export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: IssuePageProps) {
+export function IssuePage({ storageMode, defaultInstitution, onIssue, onVerify, onView }: IssuePageProps) {
   const [recipientName, setRecipientName] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [title, setTitle] = useState("");
@@ -27,10 +28,12 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
   const [expiresAt, setExpiresAt] = useState("");
   const [documentName, setDocumentName] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState<Certificate | null>(null);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
     setError("");
     setCreated(null);
 
@@ -43,6 +46,7 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
       return;
     }
 
+    setSubmitting(true);
     try {
       const certificate = onIssue({
         recipientName: recipientName.trim(),
@@ -54,9 +58,11 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
         expiresAt: expiresAt || null,
         documentName,
       });
-      setCreated(certificate);
+      setCreated(await certificate);
     } catch (issueError) {
       setError(issueError instanceof Error ? issueError.message : "The demo record could not be created.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -91,19 +97,19 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
           <h1>Issue a certificate</h1>
           <p>Create a credential record for a graduate, learner, or professional.</p>
         </div>
-        <span className="step-chip"><Sparkles size={14} /> Demo issuance</span>
+        <span className="step-chip"><Sparkles size={14} /> {storageMode === "mock" ? "Demo issuance" : "Off-chain metadata"}</span>
       </section>
 
       <div className="demo-notice">
         <Info size={17} />
-        <span>This creates a <strong>local demo record only</strong>. It is not written to a blockchain and cannot be presented as cryptographic proof.</span>
+        <span>{storageMode === "mock" ? <>This creates a <strong>local demo record only</strong>. It is not written to a blockchain and cannot be presented as cryptographic proof.</> : <>This saves <strong>off-chain metadata only</strong> to the configured spreadsheet. It does not issue or verify anything on-chain.</>}</span>
       </div>
 
       {created && (
         <section className="success-card" aria-live="polite">
           <div className="success-check"><Check size={20} /></div>
           <div className="success-copy">
-            <span className="eyebrow">DEMO RECORD CREATED</span>
+            <span className="eyebrow">{storageMode === "mock" ? "DEMO RECORD CREATED" : "OFF-CHAIN METADATA SAVED"}</span>
             <h2>{created.title}</h2>
             <p>Issued to {created.recipientName} on {formatDate(created.issuedAt)}.</p>
             <code>{created.id}</code>
@@ -125,8 +131,8 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
               <input id="recipient-name" autoComplete="name" value={recipientName} onChange={(event) => setRecipientName(event.target.value)} placeholder="e.g. Jordan Lee" minLength={2} maxLength={100} required />
             </div>
             <div className="field-group">
-              <label className="field-label" htmlFor="recipient-email">Email address <span>*</span></label>
-              <input id="recipient-email" type="email" autoComplete="email" value={recipientEmail} onChange={(event) => setRecipientEmail(event.target.value)} placeholder="jordan@example.edu" maxLength={254} required />
+              <label className="field-label" htmlFor="recipient-email">Email address <span className="optional-mark">{storageMode === "mock" ? "*" : "Not stored"}</span></label>
+              <input id="recipient-email" type="email" autoComplete="email" value={recipientEmail} onChange={(event) => setRecipientEmail(event.target.value)} placeholder={storageMode === "mock" ? "jordan@example.edu" : "Not sent to Google Sheets"} maxLength={254} required={storageMode === "mock"} />
             </div>
           </div>
 
@@ -164,8 +170,8 @@ export function IssuePage({ defaultInstitution, onIssue, onVerify, onView }: Iss
 
           {error && <p className="form-error" role="alert"><AlertCircle size={16} />{error}</p>}
           <div className="form-submit-row">
-            <span><Info size={14} /> Demo mode. No transaction or file upload.</span>
-            <button className="button button-primary" type="submit"><Sparkles size={16} /> Create demo record</button>
+            <span><Info size={14} /> {storageMode === "mock" ? "Demo mode. No transaction or file upload." : "Only certificate metadata is sent; email and documents are excluded."}</span>
+            <button className="button button-primary" type="submit" disabled={submitting}><Sparkles size={16} /> {submitting ? "Saving…" : storageMode === "mock" ? "Create demo record" : "Save metadata record"}</button>
           </div>
         </form>
 

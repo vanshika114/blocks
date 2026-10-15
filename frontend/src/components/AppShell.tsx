@@ -26,10 +26,11 @@ interface AppShellProps {
   page: AppPage;
   onNavigate: (page: AppPage) => void;
   notificationsEnabled: boolean;
+  storageMode: "mock" | "apps-script";
   children: ReactNode;
 }
 
-export function AppShell({ page, onNavigate, notificationsEnabled, children }: AppShellProps) {
+export function AppShell({ page, onNavigate, notificationsEnabled, storageMode, children }: AppShellProps) {
   const pageTitle = {
     dashboard: "Overview",
     issue: "Issue certificate",
@@ -82,7 +83,7 @@ export function AppShell({ page, onNavigate, notificationsEnabled, children }: A
         <header className="topbar">
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{pageTitle}</strong></div>
           <div className="topbar-actions">
-            <span className="environment-pill"><span /> DEMO MODE · MOCK DATA</span>
+            <span className="environment-pill"><span /> {storageMode === "mock" ? "DEMO MODE · MOCK DATA" : "DEMO MODE · SHEETS METADATA"}</span>
             <button className="icon-button notification-button" type="button" aria-label={notificationsEnabled ? "Demo notification indicator enabled" : "Demo notification indicator disabled"} title={notificationsEnabled ? "Demo notification indicator enabled" : "Demo notification indicator disabled"}>
               <Bell size={18} />{notificationsEnabled && <i aria-hidden="true" />}
             </button>
@@ -91,7 +92,7 @@ export function AppShell({ page, onNavigate, notificationsEnabled, children }: A
         </header>
         <div className="onchain-banner">
           <ShieldCheck size={16} />
-          <span><strong>Demo workspace</strong> · Issuance and revocation change local memory only; no on-chain transaction or cryptographic verification is connected.</span>
+          <span><strong>Demo workspace</strong> · {storageMode === "mock" ? "Records are stored in memory only." : "Google Sheets stores off-chain metadata only."} No on-chain transaction or cryptographic verification is connected.</span>
           <Sparkles size={15} className="banner-sparkle" />
         </div>
         <div className="page-content">{children}</div>

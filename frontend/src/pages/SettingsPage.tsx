@@ -5,11 +5,13 @@ export function SettingsPage({
   onInstitutionNameChange,
   notificationsEnabled,
   onNotificationsChange,
+  storageMode,
 }: {
   institutionName: string;
   onInstitutionNameChange: (name: string) => void;
   notificationsEnabled: boolean;
   onNotificationsChange: (enabled: boolean) => void;
+  storageMode: "mock" | "apps-script";
 }) {
   return (
     <div className="settings-page">
@@ -39,8 +41,8 @@ export function SettingsPage({
       </section>
 
       <section className="panel settings-card integration-card">
-        <div className="settings-section-heading"><span className="settings-icon settings-icon-gold"><CircleHelp size={18} /></span><div><h2>Future integrations</h2><p>These connections are not implemented or configured.</p></div></div>
-        <div className="integration-row"><div><strong>Google Apps Script / Sheets</strong><p>Future off-chain metadata adapter; no URL, credentials, or live connection is configured.</p></div><span className="coming-soon">NOT CONNECTED</span></div>
+        <div className="settings-section-heading"><span className="settings-icon settings-icon-gold"><CircleHelp size={18} /></span><div><h2>Integration status</h2><p>Metadata and blockchain integrations are separate systems.</p></div></div>
+        <div className="integration-row"><div><strong>Google Apps Script / Sheets</strong><p>{storageMode === "apps-script" ? "Configured endpoint selected. API reachability and permissions are checked when records load." : "Configure VITE_CERTIFICATE_API_URL to select the off-chain metadata adapter."}</p></div><span className="coming-soon">{storageMode === "apps-script" ? "ENDPOINT CONFIGURED" : "MOCK SERVICE"}</span></div>
         <div className="integration-row"><div><strong>Local Hardhat contract</strong><p>Future contract adapter for issuance, reads, hash checks, revocation, and transaction results.</p></div><span className="coming-soon">NOT CONNECTED</span></div>
         <p className="integration-doc-link">Integration contract notes: <code>frontend/README.md</code> <ExternalLink size={14} /></p>
       </section>

@@ -4,7 +4,7 @@ export type CertificateStatus = CertificateRecordStatus | "expired";
 export interface Certificate {
   id: string;
   recipientName: string;
-  recipientEmail: string;
+  recipientEmail: string | null;
   title: string;
   program: string;
   institution: string;
@@ -14,6 +14,7 @@ export interface Certificate {
   documentName: string | null;
   revocationReason: string | null;
   revokedAt: string | null;
+  revocationTransactionReference: string | null;
 }
 
 export interface NewCertificate {
@@ -28,6 +29,8 @@ export interface NewCertificate {
 }
 
 export interface CertificateMetadataUpdate {
-  recipientEmail?: string;
-  documentName?: string | null;
+  title?: string;
+  program?: string;
+  institution?: string;
+  expiresAt?: string | null;
 }

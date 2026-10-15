@@ -14,6 +14,7 @@ export const mockCertificates: Certificate[] = [
     documentName: "aarav-mehta-degree.pdf",
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08420",
@@ -28,6 +29,7 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08419",
@@ -42,6 +44,7 @@ export const mockCertificates: Certificate[] = [
     documentName: "cloud-foundations.pdf",
     revocationReason: "Issued with an incorrect completion date.",
     revokedAt: "2026-09-24",
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08418",
@@ -56,6 +59,7 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08417",
@@ -70,6 +74,7 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08416",
@@ -84,6 +89,7 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08415",
@@ -98,6 +104,7 @@ export const mockCertificates: Certificate[] = [
     documentName: "cybersecurity-associate.pdf",
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2026-08414",
@@ -112,6 +119,7 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
   {
     id: "CX-2025-07103",
@@ -126,5 +134,6 @@ export const mockCertificates: Certificate[] = [
     documentName: null,
     revocationReason: null,
     revokedAt: null,
+    revocationTransactionReference: null,
   },
 ];

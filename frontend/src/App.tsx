@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, CheckCircle2, X } from "lucide-react";
 
 import { AppShell, type AppPage } from "./components/AppShell";
 import { CertificateDetailsModal } from "./components/CertificateDetailsModal";
 import { RevokeModal } from "./components/RevokeModal";
-import { certificateService } from "./services/mockCertificateService";
+import { certificateService } from "./services/configuredCertificateService";
 import type { Certificate, NewCertificate } from "./types/certificate";
 import { DashboardPage } from "./pages/DashboardPage";
 import { IssuePage } from "./pages/IssuePage";
@@ -19,7 +19,10 @@ function initialVerifyId(): string {
 }
 
 export default function App() {
-  const [certificates, setCertificates] = useState(() => certificateService.listCertificates());
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [serviceLoadError, setServiceLoadError] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
   const [verifyId, setVerifyId] = useState(initialVerifyId);
   const [page, setPage] = useState<AppPage>(() => initialVerifyId() ? "verify" : "dashboard");
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
@@ -28,13 +31,33 @@ export default function App() {
   const [institutionName, setInstitutionName] = useState("Northbridge University");
   const [toast, setToast] = useState<Toast | null>(null);
 
+  useEffect(() => {
+    let current = true;
+    setIsLoading(true);
+    setServiceLoadError("");
+    certificateService
+      .listCertificates()
+      .then((records) => {
+        if (current) setCertificates(records);
+      })
+      .catch((error: unknown) => {
+        if (current) {
+          setServiceLoadError(
+            error instanceof Error ? error.message : "Certificate records could not be loaded.",
+          );
+        }
+      })
+      .finally(() => {
+        if (current) setIsLoading(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [reloadToken]);
+
   function showToast(nextToast: Toast) {
     setToast(nextToast);
     window.setTimeout(() => setToast(null), 3600);
-  }
-
-  function updateSnapshot() {
-    setCertificates(certificateService.listCertificates());
   }
 
   function navigate(nextPage: AppPage) {
@@ -59,10 +82,19 @@ export default function App() {
     window.history.pushState(null, "", url);
   }
 
-  function createCertificate(input: NewCertificate): Certificate {
-    const certificate = certificateService.createCertificate(input);
-    updateSnapshot();
-    showToast({ type: "success", message: "Demo certificate record created." });
+  async function createCertificate(input: NewCertificate): Promise<Certificate> {
+    const certificate = await certificateService.createCertificate(input);
+    setCertificates((current) => [
+      certificate,
+      ...current.filter((record) => record.id !== certificate.id),
+    ]);
+    showToast({
+      type: "success",
+      message:
+        certificateService.mode === "mock"
+          ? "Demo certificate record created."
+          : "Off-chain certificate metadata saved. No blockchain transaction occurred.",
+    });
     return certificate;
   }
 
@@ -71,25 +103,26 @@ export default function App() {
     setRevokeTarget(certificate);
   }
 
-  function confirmRevocation(reason: string) {
+  async function confirmRevocation(reason: string): Promise<void> {
     if (!revokeTarget) return;
-    try {
-      certificateService.revokeCertificate(revokeTarget.id, reason);
-      updateSnapshot();
-      setRevokeTarget(null);
-      showToast({ type: "success", message: "Certificate marked revoked in local demo data." });
-    } catch (error) {
-      showToast({
-        type: "error",
-        message: error instanceof Error ? error.message : "The demo record could not be revoked.",
-      });
-    }
+    const revoked = await certificateService.revokeCertificate(revokeTarget.id, reason);
+    setCertificates((current) =>
+      current.map((record) => (record.id === revoked.id ? revoked : record)),
+    );
+    setRevokeTarget(null);
+    showToast({
+      type: "success",
+      message:
+        certificateService.mode === "mock"
+          ? "Certificate marked revoked in local demo data."
+          : "Off-chain revocation metadata saved. No blockchain transaction occurred.",
+    });
   }
 
   const pageContent = (() => {
     switch (page) {
       case "issue":
-        return <IssuePage defaultInstitution={institutionName} onIssue={createCertificate} onVerify={openVerification} onView={setSelectedCertificate} />;
+        return <IssuePage storageMode={certificateService.mode} defaultInstitution={institutionName} onIssue={createCertificate} onVerify={openVerification} onView={setSelectedCertificate} />;
       case "verify":
         return <VerifyPage certificates={certificates} initialId={verifyId} onSearchId={openVerification} onView={setSelectedCertificate} />;
       case "registry":
@@ -100,6 +133,7 @@ export default function App() {
           onInstitutionNameChange={setInstitutionName}
           notificationsEnabled={notificationsEnabled}
           onNotificationsChange={setNotificationsEnabled}
+          storageMode={certificateService.mode}
         />;
       case "dashboard":
         return <DashboardPage certificates={certificates} onNavigate={navigate} onView={setSelectedCertificate} onVerify={openVerification} />;
@@ -107,8 +141,16 @@ export default function App() {
   })();
 
   return (
-    <AppShell page={page} onNavigate={navigate} notificationsEnabled={notificationsEnabled}>
-      {pageContent}
+    <AppShell page={page} onNavigate={navigate} notificationsEnabled={notificationsEnabled} storageMode={certificateService.mode}>
+      {isLoading ? (
+        <div className="service-state" role="status">Loading certificate metadata…</div>
+      ) : serviceLoadError ? (
+        <div className="service-state service-state-error" role="alert">
+          <strong>Certificate service unavailable</strong>
+          <span>{serviceLoadError}</span>
+          <button className="button button-secondary" type="button" onClick={() => setReloadToken((value) => value + 1)}>Retry</button>
+        </div>
+      ) : pageContent}
       {selectedCertificate && (
         <CertificateDetailsModal
           certificate={selectedCertificate}
@@ -120,6 +162,7 @@ export default function App() {
       {revokeTarget && (
         <RevokeModal
           certificate={revokeTarget}
+          storageMode={certificateService.mode}
           onClose={() => setRevokeTarget(null)}
           onConfirm={confirmRevocation}
         />

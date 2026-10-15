@@ -27,7 +27,7 @@ export function RegistryPage({
         const matchesSearch = !term || [
           certificate.id,
           certificate.recipientName,
-          certificate.recipientEmail,
+          certificate.recipientEmail ?? "",
           certificate.title,
           certificate.program,
           certificate.institution,

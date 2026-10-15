@@ -5,12 +5,13 @@ import type {
 } from "../types/certificate";
 
 export interface CertificateService {
-  listCertificates(): Certificate[];
-  getCertificate(id: string): Certificate | null;
-  createCertificate(input: NewCertificate): Certificate;
+  readonly mode: "mock" | "apps-script";
+  listCertificates(): Promise<Certificate[]>;
+  getCertificate(id: string): Promise<Certificate | null>;
+  createCertificate(input: NewCertificate): Promise<Certificate>;
   updateOffChainMetadata(
     id: string,
     update: CertificateMetadataUpdate,
-  ): Certificate;
-  revokeCertificate(id: string, reason: string): Certificate;
+  ): Promise<Certificate>;
+  revokeCertificate(id: string, reason: string): Promise<Certificate>;
 }
