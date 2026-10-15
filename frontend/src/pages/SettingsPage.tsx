@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Bell, Building2, CircleHelp, ExternalLink, ShieldAlert, SlidersHorizontal } from "lucide-react";
 
 export function SettingsPage({

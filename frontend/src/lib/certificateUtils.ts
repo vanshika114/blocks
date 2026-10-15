@@ -64,5 +64,5 @@ p{line-height:1.7}.id{font:12px monospace;color:#667064;margin-top:38px}
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

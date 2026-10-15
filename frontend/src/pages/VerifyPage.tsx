@@ -66,6 +66,7 @@ export function VerifyPage({ certificates, initialId, onSearchId, onView }: Veri
       </form>
       {error && <p className="field-error verify-error" role="alert">{error}</p>}
       <div className="verify-help"><span>TRY A SAMPLE ID</span>{certificates.slice(0, 3).map((record) => <button key={record.id} type="button" onClick={() => { setQuery(record.id); setSearchedId(record.id); setError(""); onSearchId(record.id); }}>{record.id}</button>)}</div>
+      <p className="scan-alternative">Camera scanning is not included in this demo. Enter or paste the printed ID, or open a certificate&apos;s local QR link.</p>
 
       {!searchedId ? (
         <div className="verify-prompt panel">
@@ -79,7 +80,7 @@ export function VerifyPage({ certificates, initialId, onSearchId, onView }: Veri
       ) : (
         <div className="result-card result-unknown" aria-live="polite">
           <div className="result-icon"><FileQuestion size={24} /></div>
-          <div className="result-body"><StatusBadge status="expired" /><h2>No matching record found</h2><p><code>{searchedId}</code> does not appear in the current demo registry. Check the ID or ask the issuing institution to confirm the record.</p></div>
+          <div className="result-body"><StatusBadge status="unknown" /><h2>No matching record found</h2><p><code>{searchedId}</code> does not appear in the current demo registry. Check the ID or ask the issuing institution to confirm the record.</p></div>
         </div>
       )}
     </div>

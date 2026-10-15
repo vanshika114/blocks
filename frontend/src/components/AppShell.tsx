@@ -52,6 +52,7 @@ export function AppShell({ page, onNavigate, notificationsEnabled, children }: A
               key={id}
               className={`nav-link ${page === id ? "nav-link-active" : ""}`}
               type="button"
+              aria-label={label}
               onClick={() => onNavigate(id)}
               aria-current={page === id ? "page" : undefined}
             >
@@ -67,7 +68,7 @@ export function AppShell({ page, onNavigate, notificationsEnabled, children }: A
           <div><strong>Need a hand?</strong><small>Explore the demo workspace</small></div>
           <ChevronDown size={15} />
         </div>
-        <button className={`nav-link settings-link ${page === "settings" ? "nav-link-active" : ""}`} type="button" onClick={() => onNavigate("settings")} aria-current={page === "settings" ? "page" : undefined}>
+        <button className={`nav-link settings-link ${page === "settings" ? "nav-link-active" : ""}`} type="button" aria-label="Settings" onClick={() => onNavigate("settings")} aria-current={page === "settings" ? "page" : undefined}>
           <Settings2 size={18} strokeWidth={1.8} /><span>Settings</span>
         </button>
         <div className="profile-switcher">
@@ -90,7 +91,7 @@ export function AppShell({ page, onNavigate, notificationsEnabled, children }: A
         </header>
         <div className="onchain-banner">
           <ShieldCheck size={16} />
-          <span><strong>Demo workspace</strong> · Records are stored in memory only. Blockchain verification is not connected.</span>
+          <span><strong>Demo workspace</strong> · Issuance and revocation change local memory only; no on-chain transaction or cryptographic verification is connected.</span>
           <Sparkles size={15} className="banner-sparkle" />
         </div>
         <div className="page-content">{children}</div>

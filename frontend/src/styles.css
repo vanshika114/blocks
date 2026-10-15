@@ -30,7 +30,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 button:disabled { cursor: not-allowed; opacity: .55; }
 .sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  position: absolute; top: 0; left: 0; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 
@@ -176,6 +176,7 @@ h1 { margin: 8px 0 6px; color: #252921; font-family: "DM Serif Display", Georgia
 .status-active { border-color: #dbe9dc; color: #477454; background: #f0f7f0; }
 .status-revoked { border-color: #efdcd8; color: #a25249; background: #fbf0ee; }
 .status-expired { border-color: #e8e5db; color: #81785f; background: #f7f5ef; }
+.status-unknown { border-color: #e7e3d8; color: #766e5b; background: #f8f6f0; }
 .row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 1px; }
 .row-actions .icon-button { width: 27px; height: 27px; }
 .empty-state { display: flex; min-height: 230px; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
@@ -264,6 +265,7 @@ h1 { margin: 8px 0 6px; color: #252921; font-family: "DM Serif Display", Georgia
 .verify-help > span { margin-right: 3px; color: #a0a096; font-size: 8px; font-weight: 700; letter-spacing: .08em; }
 .verify-help button { padding: 4px 7px; border: 1px solid #e9e7df; border-radius: 4px; color: #7b7057; background: #fff; font-family: Consolas, monospace; font-size: 8px; cursor: pointer; }
 .verify-help button:hover { border-color: #c8b789; }
+.scan-alternative { margin: -13px 3px 19px; color: #96968d; font-size: 9px; }
 .verify-error { margin: -13px 0 0 4px; }
 .verify-prompt { display: flex; min-height: 266px; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px; text-align: center; }
 .verify-prompt-icon { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; color: #927b50; background: #f5f0e6; }
