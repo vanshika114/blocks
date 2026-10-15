@@ -1,4 +1,4 @@
-# 🔐 CertifyX
+# CertifyX
 ### Blockchain-Powered Certificate Verification
 
 **CertifyX** is a blockchain-based certificate verification platform designed to make academic and professional credentials more secure, transparent, and tamper-resistant. It aims to simplify certificate authentication by allowing institutions to issue digital certificates and enabling anyone to verify their authenticity without relying entirely on centralized databases.
@@ -9,13 +9,13 @@ By combining blockchain technology, cryptographic hashing, and a lightweight web
 
 ## ✨ Key Features
 
-- 🔏 **Tamper-Resistant Verification:** Generate a unique SHA-256 hash for each certificate and record its verification data on the blockchain.
-- 🎓 **Digital Certificate Issuance:** Enable authorized institutions to issue and register certificates digitally.
-- 🔍 **Instant Verification:** Verify a certificate by comparing its computed hash against the recorded certificate hash.
-- 🚫 **Certificate Revocation:** Allow authorized issuers to revoke certificates when necessary.
-- 🔗 **Blockchain Transparency:** Use on-chain records to support transparent and independently verifiable certificate validation.
-- 🛡️ **Privacy-Focused Design:** Keep certificate PDFs and personal information off-chain while storing verification-related data on-chain.
-- 📊 **Lightweight Data Management:** Use Google Sheets and Google Apps Script for supporting application data management.
+- **Tamper-Resistant Verification:** Generate a unique SHA-256 hash for each certificate and record its verification data on the blockchain.
+- **Digital Certificate Issuance:** Enable authorized institutions to issue and register certificates digitally.
+- **Instant Verification:** Verify a certificate by comparing its computed hash against the recorded certificate hash.
+- **Certificate Revocation:** Allow authorized issuers to revoke certificates when necessary.
+- **Blockchain Transparency:** Use on-chain records to support transparent and independently verifiable certificate validation.
+- **Privacy-Focused Design:** Keep certificate PDFs and personal information off-chain while storing verification-related data on-chain.
+- **Lightweight Data Management:** Use Google Sheets and Google Apps Script for supporting application data management.
 
 ## 🎯 Problem Statement
 
@@ -23,7 +23,7 @@ Traditional certificate verification often involves manual checks, centralized d
 
 CertifyX aims to address these challenges by introducing a blockchain-backed verification mechanism that makes certificate integrity easier to check and unauthorized alterations easier to detect.
 
-## 💡 How It Works
+## How It Works
 
 1. **Issue:** An authorized institution submits certificate details through the platform.
 2. **Hash:** The system generates a SHA-256 hash from the certificate or its defined verification data.
@@ -34,7 +34,7 @@ CertifyX aims to address these challenges by introducing a blockchain-backed ver
 
 A matching hash supports the integrity of the verified file. It does not independently prove that the original issuer was legitimate, so issuer authorization is an important part of the design.
 
-## 🏗️ Technology Stack
+## Technology Stack
 
 | Technology | Purpose |
 |---|---|
@@ -52,7 +52,7 @@ A matching hash supports the integrity of the verified file. It does not indepen
 
 *The stack describes the intended architecture. Individual integrations may still be under development.*
 
-## 🧩 System Architecture
+## System Architecture
 
 CertifyX is designed around three primary layers:
 
