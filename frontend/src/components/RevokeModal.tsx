@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { AlertTriangle, X } from "lucide-react";
 
 import type { Certificate } from "../types/certificate";
@@ -15,7 +15,7 @@ export function RevokeModal({
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (reason.trim().length < 8) {
       setError("Please enter a reason with at least 8 characters.");

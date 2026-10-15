@@ -25,10 +25,11 @@ const navigation: { id: AppPage; label: string; icon: typeof LayoutDashboard }[]
 interface AppShellProps {
   page: AppPage;
   onNavigate: (page: AppPage) => void;
+  notificationsEnabled: boolean;
   children: ReactNode;
 }
 
-export function AppShell({ page, onNavigate, children }: AppShellProps) {
+export function AppShell({ page, onNavigate, notificationsEnabled, children }: AppShellProps) {
   const pageTitle = {
     dashboard: "Overview",
     issue: "Issue certificate",
@@ -81,8 +82,8 @@ export function AppShell({ page, onNavigate, children }: AppShellProps) {
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{pageTitle}</strong></div>
           <div className="topbar-actions">
             <span className="environment-pill"><span /> DEMO MODE · MOCK DATA</span>
-            <button className="icon-button notification-button" type="button" aria-label="Notifications are demo-only" title="Notifications are demo-only">
-              <Bell size={18} /><i aria-hidden="true" />
+            <button className="icon-button notification-button" type="button" aria-label={notificationsEnabled ? "Demo notification indicator enabled" : "Demo notification indicator disabled"} title={notificationsEnabled ? "Demo notification indicator enabled" : "Demo notification indicator disabled"}>
+              <Bell size={18} />{notificationsEnabled && <i aria-hidden="true" />}
             </button>
             <span className="topbar-avatar">N</span>
           </div>
